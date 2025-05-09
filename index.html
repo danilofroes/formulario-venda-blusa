@@ -118,6 +118,11 @@
       }
 
       function enviarFormulario() {
+        if (oversizedCount === 0 && tradicionalCount === 0) {
+          alert('Por favor, selecione pelo menos uma camisa (Oversized ou Tradicional) para continuar.');
+          return;
+        }
+
         const nomeSelect = document.getElementById('nomeSelect').value;
         const nomeOutro = document.getElementById('nomeOutro').value.trim();
         const nome = nomeSelect === 'Outro' ? nomeOutro : nomeSelect;
