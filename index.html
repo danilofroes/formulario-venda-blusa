@@ -195,6 +195,10 @@
           return;
         }
 
+        const enviarBtn = document.getElementById('enviarBtn');
+        enviarBtn.disabled = true;
+        enviarBtn.textContent = 'Enviando...';
+
         const camisas = [];
 
         for (let i = 1; i <= oversizedCount; i++) {
@@ -208,8 +212,8 @@
         }
 
         const reader = new FileReader();
-        reader.onload = function(e) {
-          const fileData = e.target.result.split(',')[1]; // remove header base64
+        reader.onload = function (e) {
+          const fileData = e.target.result.split(',')[1];
           const fileName = comprovante.name;
 
           google.script.run
@@ -218,6 +222,13 @@
               document.getElementById('formulario').reset();
               document.getElementById('camisasContainer').innerHTML = '';
               document.getElementById('pagamentoSection').style.display = 'none';
+              enviarBtn.disabled = false;
+              enviarBtn.textContent = 'Enviar Pedido';
+            })
+            .withFailureHandler(err => {
+              alert('Erro ao enviar. Tente novamente.');
+              enviarBtn.disabled = false;
+              enviarBtn.textContent = 'Enviar Pedido';
             })
             .processForm({ nome, telefone, camisas, comprovante: { fileName, base64: fileData } });
         };
@@ -354,7 +365,7 @@
       <label for="comprovante">Envie o comprovante de pagamento (imagem ou PDF):</label>
       <input type="file" id="comprovante" accept="image/*,application/pdf">
       <div class="section">
-        <button onclick="enviarFormulario()">Enviar Pedido</button>
+        <button id="enviarBtn" onclick="enviarFormulario()">Enviar Pedido</button>
       </div>
     </div>
   </div>
