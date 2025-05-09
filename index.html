@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+        padding: 20px;
+        max-width: 800px;
+        margin: auto;
+      }
+      h2 {
+        color: #9e1f22;
+        margin-top: 40px;
+      }
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+      }
+      input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        background-color: #9e1f22;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        margin-top: 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #7c191b;
+      }
+      .section {
+        margin-top: 40px;
+      }
+      .imagem-blusa {
+        width: 100%;
+        max-width: 800px;
+        margin-top: 20px;
+        border-radius: 10px;
+      }
+      .camisa-card {
+        background-color: #f9f9f9;
+        padding: 15px;
+        margin-top: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+    </style>
+    <script>
+      let oversizedCount = 0;
+      let tradicionalCount = 0;
+
+      function showNameInput() {
+        const nomeSelect = document.getElementById('nomeSelect');
+        const nomeInputDiv = document.getElementById('nomeInputDiv');
+        if (nomeSelect.value === 'Outro') {
+          nomeInputDiv.style.display = 'block';
+        } else {
+          nomeInputDiv.style.display = 'none';
+        }
+      }
+
+      function gerarCamposCamisas() {
+        oversizedCount = parseInt(document.getElementById('quantidadeOversized').value) || 0;
+        tradicionalCount = parseInt(document.getElementById('quantidadeTradicional').value) || 0;
+        const container = document.getElementById('camisasContainer');
+        container.innerHTML = '';
+
+        for (let i = 1; i <= oversizedCount; i++) {
+          const div = document.createElement('div');
+          div.className = 'camisa-card';
+          div.innerHTML = `
+            <h3>Camisa Oversized ${i}</h3>
+            <label for="oversized_tamanho_${i}">Tamanho:</label>
+            <select id="oversized_tamanho_${i}">
+              <option value="PP">PP</option>
+              <option value="P">P</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+              <option value="GG">GG</option>
+              <option value="XG">XG</option>
+            </select>
+          `;
+          container.appendChild(div);
+        }
+
+        for (let i = 1; i <= tradicionalCount; i++) {
+          const div = document.createElement('div');
+          div.className = 'camisa-card';
+          div.innerHTML = `
+            <h3>Camisa Tradicional ${i}</h3>
+            <label for="tradicional_tamanho_${i}">Tamanho:</label>
+            <select id="tradicional_tamanho_${i}">
+              <option value="PP">PP</option>
+              <option value="P">P</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+              <option value="GG">GG</option>
+            </select>
+          `;
+          container.appendChild(div);
+        }
+
+        const total = (oversizedCount * 65) + (tradicionalCount * 55);
+        document.getElementById('valorTotal').innerText = `R$ ${total},00`;
+        document.getElementById('pagamentoSection').style.display = 'block';
+      }
+
+      function enviarFormulario() {
+        const nomeSelect = document.getElementById('nomeSelect').value;
+        const nomeOutro = document.getElementById('nomeOutro').value.trim();
+        const nome = nomeSelect === 'Outro' ? nomeOutro : nomeSelect;
+        const telefone = document.getElementById('telefone').value.trim();
+        const comprovante = document.getElementById('comprovante').files[0];
+
+        if (!nome || !telefone || !comprovante) {
+          alert('Por favor, preencha todos os campos obrigatórios e anexe o comprovante.');
+          return;
+        }
+
+        const camisas = [];
+
+        for (let i = 1; i <= oversizedCount; i++) {
+          const tamanho = document.getElementById(`oversized_tamanho_${i}`).value;
+          camisas.push({ modelo: 'Oversized', tamanho });
+        }
+
+        for (let i = 1; i <= tradicionalCount; i++) {
+          const tamanho = document.getElementById(`tradicional_tamanho_${i}`).value;
+          camisas.push({ modelo: 'Tradicional', tamanho });
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const fileData = e.target.result.split(',')[1]; // remove header base64
+          const fileName = comprovante.name;
+
+          google.script.run
+            .withSuccessHandler(res => {
+              alert(res);
+              document.getElementById('formulario').reset();
+              document.getElementById('camisasContainer').innerHTML = '';
+              document.getElementById('pagamentoSection').style.display = 'none';
+            })
+            .processForm({ nome, telefone, camisas, comprovante: { fileName, base64: fileData } });
+        };
+
+        reader.readAsDataURL(comprovante);
+      }
+
+      function formatarTelefone(campo) {
+        // Remove tudo que não for número
+        let numeros = campo.value.replace(/\D/g, '');
+
+        // Limita o número a 11 dígitos (2 DDD + 9 número)
+        numeros = numeros.substring(0, 11);
+
+        // Aplica a máscara (xx) xxxxx-xxxx
+        if (numeros.length >= 2 && numeros.length <= 6) {
+          campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2)}`;
+        } else if (numeros.length > 6) {
+          campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2, 7)}-${numeros.substring(7)}`;
+        } else {
+          campo.value = numeros;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <img src="https://lh7-us.googleusercontent.com/ZhA_9UjD5EofzgzHgv1vOwHarq7Du-JwR-DjKH8ay5ELi9aAKdIHJwqQQcMjhEIIVWLOk4WtZmt03xEqzFZRtB0WAoL1XMnuntSCoRwloHHm4812ivaWXuPEsLgPGFbX8x0VYFAc1aGdGgoRNPs-64b3Kb5r8lqG8or7SF24egHncGT9EGblwWPC2XV9m2yTJgO5mzLa?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Imagem de Capa">
+
+    <p>Olá, membros e ex-mebros da MinervaBots! 🤖</p>
+    <p>Chegou a hora de vestir com orgulho a camisa do Zé Pequeno, o nosso campeão mundial “do MUNDO”! 🏆
+    Feita especialmente pra você que vibrou, torceu e se emocionou com cada vitória do nosso Zezinho ⚙️</p>
+    <p><strong>⚠️ ATENÇÃO AO MODELO DA CAMISA! ⚠️</strong></p>
+    <p><strong>✨ VALOR DA CAMISA TRADICIONAL - R$ 55,00</strong></p>
+    <p><strong>✨ VALOR DA CAMISA MODELO OVERSIZED - R$: 65,00</strong></p>
+    <p>📅 Formulário disponível até o dia 05 DE JUNHO!</p>
+    <p>Preencha os dados abaixo e garanta a sua!</p>
+
+    <div class="section">
+      <h2>Informações Pessoais</h2>
+      <label for="nomeSelect">Nome:</label>
+      <select id="nomeSelect" onchange="showNameInput()">
+        <option value="" disabled selected>Selecione...</option>
+        <option value="Outro">Outro</option>
+        <option value="Ana Clara Pereira da Silva">Ana Clara Pereira da Silva</option>
+        <option value="Ana Luiza da Silva Ferreira Antunes">Ana Luiza da Silva Ferreira Antunes</option>
+        <option value="Ana Luiza Pither Dias">Ana Luiza Pither Dias</option>
+        <option value="Ana Melissa Lemos Medeiros Teixeira">Ana Melissa Lemos Medeiros Teixeira</option>
+        <option value="Antonio Henrique Nazar">Antonio Henrique Nazar</option>
+        <option value="Antônio Luís Gandra Neto">Antônio Luís Gandra Neto</option>
+        <option value="Beatriz Duarte Trigo Garcia">Beatriz Duarte Trigo Garcia</option>
+        <option value="Beatriz Pereira da Silva Gomes de Abreu">Beatriz Pereira da Silva Gomes de Abreu</option>
+        <option value="Bernardo de Souza Batista">Bernardo de Souza Batista</option>
+        <option value="Bruno de Moura Rebello">Bruno de Moura Rebello</option>
+        <option value="Cassiane Da Silva Gomes Rodrigues">Cassiane Da Silva Gomes Rodrigues</option>
+        <option value="Danilo Davi Gomes Fróes">Danilo Davi Gomes Fróes</option>
+        <option value="Diogo dos Santos Machado Vieira">Diogo dos Santos Machado Vieira</option>
+        <option value="Eduardo Conde Jones Borges">Eduardo Conde Jones Borges</option>
+        <option value="Felipe Conde Jones Borges">Felipe Conde Jones Borges</option>
+        <option value="Felipe Moreira Barberá">Felipe Moreira Barberá</option>
+        <option value="Francisco Batista Fernandes de Valério">Francisco Batista Fernandes de Valério</option>
+        <option value="Gabriel Cerqueira Santos">Gabriel Cerqueira Santos</option>
+        <option value="Giovanni Vitor Oliveira">Giovanni Vitor Oliveira</option>
+        <option value="Héctor Borreguero Monleón">Héctor Borreguero Monleón</option>
+        <option value="Hugo César de Oliveira">Hugo César de Oliveira</option>
+        <option value="Ileana Thaís Lopes Leandro">Ileana Thaís Lopes Leandro</option>
+        <option value="Isabele Moreira Francisco">Isabele Moreira Francisco</option>
+        <option value="Isabelle Fernandes Martins">Isabelle Fernandes Martins</option>
+        <option value="Izabel de Souza Resende Alcantara">Izabel de Souza Resende Alcantara</option>
+        <option value="João Pedro Benevides Giannini Ehrich">João Pedro Benevides Giannini Ehrich</option>
+        <option value="Júlio Leal de Souza">Júlio Leal de Souza</option>
+        <option value="Kamyla Vitoria Marins Oliveira">Kamyla Vitoria Marins Oliveira</option>
+        <option value="Karen Cerqueira Martins">Karen Cerqueira Martins</option>
+        <option value="Laise Maria Veras Lemos">Laise Maria Veras Lemos</option>
+        <option value="Letycia Ramalho Ignacio Corrêa">Letycia Ramalho Ignacio Corrêa</option>
+        <option value="Lorena da Silva Aragão">Lorena da Silva Aragão</option>
+        <option value="Lucas Araújo dos Anjos">Lucas Araújo dos Anjos</option>
+        <option value="Lucas Freitas Lopes">Lucas Freitas Lopes</option>
+        <option value="Luiz Henrique de Oliveira Vettorazzi">Luiz Henrique de Oliveira Vettorazzi</option>
+        <option value="Marcela Oliveira França">Marcela Oliveira França</option>
+        <option value="Maria Clara Borges de Albuquerque de Mendonça">Maria Clara Borges de Albuquerque de Mendonça</option>
+        <option value="Maria Eduarda Gonçalves Santos">Maria Eduarda Gonçalves Santos</option>
+        <option value="Maria Gabriela Silveira Fernandes">Maria Gabriela Silveira Fernandes</option>
+        <option value="Micaela Costa da Luz">Micaela Costa da Luz</option>
+        <option value="Raphael Pinto Martins">Raphael Pinto Martins</option>
+        <option value="Rayssa Araujo das Chagas">Rayssa Araujo das Chagas</option>
+        <option value="Rodrigo Boquimpani Martins">Rodrigo Boquimpani Martins</option>
+        <option value="Ryan Sales de Jesus">Ryan Sales de Jesus</option>
+      </select>
+      <div id="nomeInputDiv" style="display:none;">
+        <label for="nomeOutro">Digite seu nome:</label>
+        <input type="text" id="nomeOutro">
+      </div>
+
+      <label for="telefone">Número de Telefone:</label>
+      <input type="text" id="telefone" maxlength="15" oninput="formatarTelefone(this)">
+    </div>
+
+    <div class="section">
+      <button onclick="document.getElementById('modeloSection').style.display='block';">Continuar</button>
+    </div>
+
+    <div id="modeloSection" class="section" style="display:none;">
+      <h2>Seleção de Modelos</h2>
+      <h3>Estampa da camisa:</h3>
+      <img src="https://lh7-us.googleusercontent.com/Jk14GRTyB6E9wSW32ZK8Uwl75kQMs2x2uv03c-J0o-pyyNts95KAu8Ca1uqtYsSsNJl9uOm88cfAG1MOvtfg4iollbQwga_npOAsg_3It2ZOzdd13AkzhsVAS3hrOgHUgP7PVeOkE6peCuCXO50m3VMeIHPIJytcfGtzFK_2KIv4mpftNYaTh-Jnw2IbT3bOUhViBwyU?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Modelo Oversized" style="width:100%; max-width:800px;">
+      <h4>Confira atentamente a tabela de medidas disponível abaixo. É muito importante que você escolha o tamanho correto, pois não será possível realizar trocas posteriormente.</h4>
+      <p>Evite imprevistos e garanta que sua camisa do Zé Pequeno fique perfeita em você! 👕</p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <img src="https://lh7-us.googleusercontent.com/nt4YHbtg7qxCEojH680FzVFSEjylRtbQKl9FHmZZ4-foAqXzuGYU11RCKDImfq4kZznmUOkCkeyl2Tds8eSYG-EuJ-P4dONaqdE1jt47-b_clwadhgvnUxGYBYTls-FzQ5ny_N5cnz5a3KoVcB3X4MRsHueSedjrlgwNTHolzRcl9YjvtHt9yi0x3BsCbkR3FF6gLJk8?key=0pnTl8mQAUkCQLxG0Ma0_A" 
+            alt="Tabela 1" style="width: 50%; max-width: 400px; height: auto;">
+        <img src="https://lh7-us.googleusercontent.com/HLYcRL9t8kj9bV_ZoGGMpO5JAudzS8zPPwGtRXTi77ullkT9Pcj4wwgf92i79LXLACUuXjsqQq1oX38WevgeZzFbjY3d_wMhgJwGd6YnHl6WKg6CHNp89gdcnpRRhId-oUvvLJIb0euMK0MeDoeiF2r7rNjhNguAoY0a6hlsFAfq3cWXmJJ9zNPshVzmZPojXnH0yTBV?key=0pnTl8mQAUkCQLxG0Ma0_A" 
+            alt="Tabela 2" style="width: 50%; max-width: 400px; height: auto;">
+      </div>
+
+      <label for="quantidadeOversized">Quantidade de Camisas Oversized:</label>
+      <input type="number" id="quantidadeOversized" min="0" value="0">
+
+      <label for="quantidadeTradicional">Quantidade de Camisas Tradicional:</label>
+      <input type="number" id="quantidadeTradicional" min="0" value="0">
+
+      <button onclick="gerarCamposCamisas()">Confirmar Quantidades</button>
+    </div>
+
+    <div id="camisasContainer" class="section"></div>
+
+    <div id="pagamentoSection" class="section" style="display:none;">
+      <h2>Pagamento</h2>
+      <p>O pagamento será realizado exclusivamente via PIX, e deverá ser feito até o dia <strong>5 de Junho.</strong></p>
+      <p><strong>Valor total:</strong> <span id="valorTotal">R$ 0,00</span></p>
+      <p>💸 Faça o PIX para: <strong>sumomini@poli.ufrj.br</strong> (chave)</p>
+      <p>Nome: Danilo Davi Gomes Fróes | Banco: NuBank</p>
+      <h4>Qualquer dúvida, mande mensagem para o Fróes: 21993839603</h4>
+      <label for="comprovante">Envie o comprovante de pagamento (imagem ou PDF):</label>
+      <input type="file" id="comprovante" accept="image/*,application/pdf">
+    </div>
+
+    <div class="section">
+      <button onclick="enviarFormulario()">Enviar Pedido</button>
+    </div>
+  </body>
+</html>
