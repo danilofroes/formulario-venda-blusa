@@ -1,68 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="description" content="Formulário de pedido de camisas do Zé Pequeno">
     <base target="_top">
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Segoe UI', sans-serif;
-        background-color: #fdf6e3; /* bege claro */
+        background-color: #fdf6e3;
         color: #000000;
         padding: 40px 20px;
         margin: 0;
       }
+
       .form-container {
-        background-color: #ffffff; /* fundo branco do formulário */
+        background-color: #ffffff;
         padding: 30px;
         max-width: 800px;
         margin: auto;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* sombra suave */
-        border-radius: 12px; /* cantos arredondados */
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
       }
+
       h2 {
         color: #9e1f22;
         margin-top: 40px;
+        font-size: 1.8em;
       }
+
+      h3, h4 {
+        margin-top: 20px;
+        color: #444;
+      }
+
       label {
         display: block;
         margin-top: 15px;
-        font-weight: bold;
+        font-weight: 600;
       }
+
       input, select, textarea {
         width: 100%;
-        padding: 10px;
-        margin-top: 5px;
+        padding: 12px;
+        margin-top: 6px;
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 6px;
+        font-size: 1rem;
+        box-sizing: border-box;
       }
+
+      input[type="number"]::-webkit-inner-spin-button {
+        margin: 0;
+      }
+
       button {
         background-color: #9e1f22;
         color: #ffffff;
         border: none;
-        padding: 10px 20px;
+        padding: 12px 24px;
         margin-top: 20px;
-        border-radius: 5px;
+        border-radius: 6px;
+        font-size: 1rem;
         cursor: pointer;
+        transition: background-color 0.3s ease;
       }
+
       button:hover {
         background-color: #7c191b;
       }
+
       .section {
         margin-top: 40px;
       }
+
       .imagem-blusa {
         width: 100%;
         max-width: 800px;
         margin-top: 20px;
         border-radius: 10px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
       }
+
       .camisa-card {
         background-color: #f9f9f9;
-        padding: 15px;
+        padding: 20px;
         margin-top: 15px;
         border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 8px;
+        transition: box-shadow 0.3s ease;
       }
+
+      .camisa-card:hover {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Responsividade para telas menores */
+      @media (max-width: 600px) {
+        .form-container {
+          padding: 20px;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        .imagem-blusa {
+          max-width: 100%;
+        }
+
+        .section {
+          margin-top: 30px;
+        }
+      }
+
     </style>
     <script>
       let oversizedCount = 0;
