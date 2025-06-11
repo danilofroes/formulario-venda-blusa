@@ -9,9 +9,9 @@
     <style>
       body {
         font-family: 'Segoe UI', sans-serif;
-        background-color: #fdf6e3;
+        background-color: #000000;
         color: #000000;
-        padding: 40px 20px;
+        padding: 20px 10px;
         margin: 0;
       }
 
@@ -72,7 +72,13 @@
       }
 
       .section {
-        margin-top: 40px;
+        margin-top: 0px;
+      }
+
+      .button-center {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
       }
 
       .imagem-blusa {
@@ -98,22 +104,30 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       }
 
-      /* Responsividade para telas menores */
       @media (max-width: 600px) {
-        .form-container {
-          padding: 20px;
+        body {
+          font-size: 12px;
+          padding: 10px;
         }
 
-        button {
-          width: 100%;
+        p {
+          font-size: 1em;
         }
 
-        .imagem-blusa {
-          max-width: 100%;
+        h2 {
+          font-size: 1.5em;
         }
 
-        .section {
-          margin-top: 30px;
+        h3 {
+          font-size: 1.2em;
+        }
+
+        input, select, textarea {
+          font-size: 1em;
+        }
+
+        .camisa-card {
+          padding: 15px;
         }
       }
 
@@ -258,14 +272,13 @@
     <div class="form-container">
     <img src="https://lh7-us.googleusercontent.com/ZhA_9UjD5EofzgzHgv1vOwHarq7Du-JwR-DjKH8ay5ELi9aAKdIHJwqQQcMjhEIIVWLOk4WtZmt03xEqzFZRtB0WAoL1XMnuntSCoRwloHHm4812ivaWXuPEsLgPGFbX8x0VYFAc1aGdGgoRNPs-64b3Kb5r8lqG8or7SF24egHncGT9EGblwWPC2XV9m2yTJgO5mzLa?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Imagem de Capa">
 
-    <p>Olá, membros e ex-mebros da MinervaBots! 🤖</p>
-    <p>Chegou a hora de vestir com orgulho a camisa do Zé Pequeno, o nosso campeão mundial “do MUNDO”! 🏆
-    Feita especialmente pra você que vibrou, torceu e se emocionou com cada vitória do nosso Zezinho ⚙️</p>
-    <p><strong>⚠️ ATENÇÃO AO MODELO DA CAMISA! ⚠️</strong></p>
-    <p><strong>✨ VALOR DA CAMISA TRADICIONAL - R$ 55,00</strong></p>
-    <p><strong>✨ VALOR DA CAMISA MODELO OVERSIZED - R$: 65,00</strong></p>
-    <p>📅 Formulário disponível até o dia 05 DE JUNHO!</p>
-    <p>Preencha os dados abaixo e garanta a sua!</p>
+      <p>Depois de <i>muita espera</i>, chegou a hora de vestir a blusa do <strong>nosso</strong> campeão mundial, o <i>(grande) </i>Zé Pequeno 🏆, feita especialmente pra você que vibrou, torceu e se emocionou com cada vitória da nossa MinervaBots ❤️‍🔥</p>
+      <hr>
+      <p><strong> 💸 Valores 💸 </strong></p>
+      <p> 🤯 MODELO TRADICIONAL - <strong>R$ 55,00</strong></p>
+      <p> 😎 MODELO OVERSIZED - <strong> R$: 65,00</strong></p>
+      <hr>
+      <p> 🚨Formulário disponível até o dia <strong>15 DE JULHO!🚨</strong></p>
 
     <div class="section">
       <h2>Informações Pessoais</h2>
@@ -274,7 +287,6 @@
         <option value="" disabled selected>Selecione...</option>
         <option value="Outro">Outro</option>
         <option value="Ana Clara Pereira da Silva">Ana Clara Pereira da Silva</option>
-        <option value="Ana Luiza da Silva Ferreira Antunes">Ana Luiza da Silva Ferreira Antunes</option>
         <option value="Ana Luiza Pither Dias">Ana Luiza Pither Dias</option>
         <option value="Ana Melissa Lemos Medeiros Teixeira">Ana Melissa Lemos Medeiros Teixeira</option>
         <option value="Antonio Henrique Nazar">Antonio Henrique Nazar</option>
@@ -292,7 +304,6 @@
         <option value="Francisco Batista Fernandes de Valério">Francisco Batista Fernandes de Valério</option>
         <option value="Gabriel Cerqueira Santos">Gabriel Cerqueira Santos</option>
         <option value="Giovanni Vitor Oliveira">Giovanni Vitor Oliveira</option>
-        <option value="Héctor Borreguero Monleón">Héctor Borreguero Monleón</option>
         <option value="Hugo César de Oliveira">Hugo César de Oliveira</option>
         <option value="Ileana Thaís Lopes Leandro">Ileana Thaís Lopes Leandro</option>
         <option value="Isabele Moreira Francisco">Isabele Moreira Francisco</option>
@@ -308,7 +319,6 @@
         <option value="Lucas Araújo dos Anjos">Lucas Araújo dos Anjos</option>
         <option value="Lucas Freitas Lopes">Lucas Freitas Lopes</option>
         <option value="Luiz Henrique de Oliveira Vettorazzi">Luiz Henrique de Oliveira Vettorazzi</option>
-        <option value="Marcela Oliveira França">Marcela Oliveira França</option>
         <option value="Maria Clara Borges de Albuquerque de Mendonça">Maria Clara Borges de Albuquerque de Mendonça</option>
         <option value="Maria Eduarda Gonçalves Santos">Maria Eduarda Gonçalves Santos</option>
         <option value="Maria Gabriela Silveira Fernandes">Maria Gabriela Silveira Fernandes</option>
@@ -327,7 +337,7 @@
       <input type="text" id="telefone" maxlength="15" oninput="formatarTelefone(this)">
     </div>
 
-    <div class="section">
+    <div class="button-center">
       <button onclick="document.getElementById('modeloSection').style.display='block';">Continuar</button>
     </div>
 
@@ -349,8 +359,9 @@
 
       <label for="quantidadeTradicional">Quantidade de Camisas Tradicional:</label>
       <input type="number" id="quantidadeTradicional" min="0" value="0">
-
+      <div class="button-center">
       <button onclick="gerarCamposCamisas()">Confirmar quantidades</button>
+      </div>
     </div>
 
     <div id="camisasContainer" class="section"></div>
@@ -364,7 +375,7 @@
       <h4>Qualquer dúvida, mande mensagem para o Fróes: 21993839603</h4>
       <label for="comprovante">Envie o comprovante de pagamento (imagem ou PDF):</label>
       <input type="file" id="comprovante" accept="image/*,application/pdf">
-      <div class="section">
+      <div class="button-center">
         <button id="enviarBtn" onclick="enviarFormulario()">Enviar Pedido</button>
       </div>
     </div>
