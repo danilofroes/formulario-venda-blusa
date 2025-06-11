@@ -15,6 +15,10 @@
         margin: 0;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       .form-container {
         background-color: #ffffff;
         padding: 30px;
@@ -264,12 +268,17 @@
           campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2, 7)}-${numeros.substring(7)}`;
         } else {
           campo.value = numeros;
+
+      function irParaSessao(id) {
+        const destino = document.getElementById(id);
+        if (destino) {
+          destino.scrollIntoView({ behavior: 'smooth' });
         }
       }
     </script>
   </head>
   <body>
-    <div class="form-container">
+  <div class="form-container" id="inicio">
     <img src="https://lh7-us.googleusercontent.com/ZhA_9UjD5EofzgzHgv1vOwHarq7Du-JwR-DjKH8ay5ELi9aAKdIHJwqQQcMjhEIIVWLOk4WtZmt03xEqzFZRtB0WAoL1XMnuntSCoRwloHHm4812ivaWXuPEsLgPGFbX8x0VYFAc1aGdGgoRNPs-64b3Kb5r8lqG8or7SF24egHncGT9EGblwWPC2XV9m2yTJgO5mzLa?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Imagem de Capa">
 
       <p>Depois de <i>muita espera</i>, chegou a hora de vestir a blusa do <strong>nosso</strong> campeão mundial, o <i>(grande) </i>Zé Pequeno 🏆, feita especialmente pra você que vibrou, torceu e se emocionou com cada vitória da nossa MinervaBots ❤️‍🔥</p>
@@ -338,7 +347,7 @@
     </div>
 
     <div class="button-center">
-      <button onclick="document.getElementById('modeloSection').style.display='block';">Continuar</button>
+      <button onclick="document.getElementById('modeloSection').style.display='block'; irParaSessao('modeloSection')">Continuar</button>
     </div>
 
     <div id="modeloSection" class="section" style="display:none;">
@@ -360,7 +369,7 @@
       <label for="quantidadeTradicional">Quantidade de Camisas Tradicional:</label>
       <input type="number" id="quantidadeTradicional" min="0" value="0">
       <div class="button-center">
-      <button onclick="gerarCamposCamisas()">Confirmar quantidades</button>
+      <button onclick="gerarCamposCamisas(); irParaSessao('camisasContainer')">Confirmar quantidades</button>
       </div>
     </div>
 
