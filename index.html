@@ -151,8 +151,25 @@
       }
 
       function gerarCamposCamisas() {
-        oversizedCount = parseInt(document.getElementById('quantidadeOversized').value) || 0;
-        tradicionalCount = parseInt(document.getElementById('quantidadeTradicional').value) || 0;
+        const inputs = ['quantidadeOversized', 'quantidadeTradicional'];
+
+        // Corrige os valores dos inputs (remove 0 à esquerda e garante 0 se vazio)
+        inputs.forEach(id => {
+          const input = document.getElementById(id);
+          let valor = input.value.trim();
+
+          if (valor === '') {
+            input.value = '0';
+            valor = '0';
+          } else {
+            // Remove zeros à esquerda
+            input.value = valor.replace(/^0+/, '') || '0';
+          }
+        });
+
+        // Agora lê os valores já corrigidos
+        const oversizedCount = parseInt(document.getElementById('quantidadeOversized').value) || 0;
+        const tradicionalCount = parseInt(document.getElementById('quantidadeTradicional').value) || 0;
         const container = document.getElementById('camisasContainer');
         container.innerHTML = '';
 
@@ -281,6 +298,24 @@
           destino.scrollIntoView({ behavior: 'smooth' });
         }
       }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputs = ['quantidadeOversized', 'quantidadeTradicional'];
+
+        inputs.forEach(id => {
+          const input = document.getElementById(id);
+
+          input.addEventListener("blur", () => {
+            let valor = input.value.trim();
+
+            if (valor === '') {
+              input.value = '0';
+            } else {
+              input.value = valor.replace(/^0+/, '') || '0';
+            }
+          });
+        });
+      });
     </script>
   </head>
   <body>
