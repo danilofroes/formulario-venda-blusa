@@ -108,6 +108,32 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       }
 
+      button.loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.8;
+      }
+
+      button.loading::after {
+        content: '';
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: translateY(-50%) rotate(360deg);
+        }
+      }
+
       @media (max-width: 600px) {
         body {
           font-size: 12px;
@@ -139,6 +165,7 @@
     <script>
       let oversizedCount = 0;
       let tradicionalCount = 0;
+      let formularioEnviado = false;
 
       function showNameInput() {
         const nomeSelect = document.getElementById('nomeSelect');
@@ -214,6 +241,11 @@
       }
 
       function enviarFormulario() {
+        if (formularioEnviado) {
+          const confirmar = confirm("Você já enviou o formulário. Deseja enviar novamente?");
+          if (!confirmar) return;
+        }
+
         if (oversizedCount === 0 && tradicionalCount === 0) {
           alert('Por favor, selecione pelo menos uma camisa (Oversized ou Tradicional) para continuar.');
           return;
@@ -224,14 +256,15 @@
         const nome = nomeSelect === 'Outro' ? nomeOutro : nomeSelect;
         const telefone = document.getElementById('telefone').value.trim();
         const comprovante = document.getElementById('comprovante').files[0];
+        const enviarBtn = document.getElementById('enviarBtn');
 
         if (!nome || !telefone || !comprovante) {
           alert('Por favor, preencha todos os campos obrigatórios e anexe o comprovante.');
           return;
         }
 
-        const enviarBtn = document.getElementById('enviarBtn');
         enviarBtn.disabled = true;
+        enviarBtn.classList.add('loading');
         enviarBtn.textContent = 'Enviando...';
 
         const camisas = [];
@@ -258,12 +291,15 @@
               document.getElementById('camisasContainer').innerHTML = '';
               document.getElementById('pagamentoSection').style.display = 'none';
               enviarBtn.disabled = false;
-              enviarBtn.textContent = 'Enviar Pedido';
+              enviarBtn.classList.remove('loading');
+              enviarBtn.textContent = 'Enviar novamente';
+              formularioEnviado = true;
             })
             .withFailureHandler(err => {
               alert('Erro ao enviar. Tente novamente.');
               enviarBtn.disabled = false;
-              enviarBtn.textContent = 'Enviar Pedido';
+              enviarBtn.classList.remove('loading');
+              enviarBtn.textContent = formularioEnviado ? 'Enviar novamente' : 'Enviar Pedido';
             })
             .processForm({ nome, telefone, camisas, comprovante: { fileName, base64: fileData } });
         };
