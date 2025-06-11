@@ -15,6 +15,10 @@
         margin: 0;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       .form-container {
         background-color: #ffffff;
         padding: 30px;
@@ -104,6 +108,32 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       }
 
+      button.loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.8;
+      }
+
+      button.loading::after {
+        content: '';
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: translateY(-50%) rotate(360deg);
+        }
+      }
+
       @media (max-width: 600px) {
         body {
           font-size: 12px;
@@ -135,6 +165,7 @@
     <script>
       let oversizedCount = 0;
       let tradicionalCount = 0;
+      let formularioEnviado = false;
 
       function showNameInput() {
         const nomeSelect = document.getElementById('nomeSelect');
@@ -147,6 +178,23 @@
       }
 
       function gerarCamposCamisas() {
+        const inputs = ['quantidadeOversized', 'quantidadeTradicional'];
+
+        // Corrige os valores dos inputs (remove 0 à esquerda e garante 0 se vazio)
+        inputs.forEach(id => {
+          const input = document.getElementById(id);
+          let valor = input.value.trim();
+
+          if (valor === '') {
+            input.value = '0';
+            valor = '0';
+          } else {
+            // Remove zeros à esquerda
+            input.value = valor.replace(/^0+/, '') || '0';
+          }
+        });
+
+        // Agora lê os valores já corrigidos
         oversizedCount = parseInt(document.getElementById('quantidadeOversized').value) || 0;
         tradicionalCount = parseInt(document.getElementById('quantidadeTradicional').value) || 0;
         const container = document.getElementById('camisasContainer');
@@ -193,6 +241,11 @@
       }
 
       function enviarFormulario() {
+        if (formularioEnviado) {
+          const confirmar = confirm("Você já enviou o formulário. Deseja enviar novamente?");
+          if (!confirmar) return;
+        }
+
         if (oversizedCount === 0 && tradicionalCount === 0) {
           alert('Por favor, selecione pelo menos uma camisa (Oversized ou Tradicional) para continuar.');
           return;
@@ -203,14 +256,15 @@
         const nome = nomeSelect === 'Outro' ? nomeOutro : nomeSelect;
         const telefone = document.getElementById('telefone').value.trim();
         const comprovante = document.getElementById('comprovante').files[0];
+        const enviarBtn = document.getElementById('enviarBtn');
 
         if (!nome || !telefone || !comprovante) {
           alert('Por favor, preencha todos os campos obrigatórios e anexe o comprovante.');
           return;
         }
 
-        const enviarBtn = document.getElementById('enviarBtn');
         enviarBtn.disabled = true;
+        enviarBtn.classList.add('loading');
         enviarBtn.textContent = 'Enviando...';
 
         const camisas = [];
@@ -237,12 +291,15 @@
               document.getElementById('camisasContainer').innerHTML = '';
               document.getElementById('pagamentoSection').style.display = 'none';
               enviarBtn.disabled = false;
-              enviarBtn.textContent = 'Enviar Pedido';
+              enviarBtn.classList.remove('loading');
+              enviarBtn.textContent = 'Enviar novamente';
+              formularioEnviado = true;
             })
             .withFailureHandler(err => {
               alert('Erro ao enviar. Tente novamente.');
               enviarBtn.disabled = false;
-              enviarBtn.textContent = 'Enviar Pedido';
+              enviarBtn.classList.remove('loading');
+              enviarBtn.textContent = formularioEnviado ? 'Enviar novamente' : 'Enviar Pedido';
             })
             .processForm({ nome, telefone, camisas, comprovante: { fileName, base64: fileData } });
         };
@@ -251,25 +308,54 @@
       }
 
       function formatarTelefone(campo) {
+        const erro = document.getElementById("erroTelefone");
         // Remove tudo que não for número
         let numeros = campo.value.replace(/\D/g, '');
 
-        // Limita o número a 11 dígitos (2 DDD + 9 número)
-        numeros = numeros.substring(0, 11);
-
-        // Aplica a máscara (xx) xxxxx-xxxx
-        if (numeros.length >= 2 && numeros.length <= 6) {
-          campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2)}`;
-        } else if (numeros.length > 6) {
-          campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2, 7)}-${numeros.substring(7)}`;
+        if (numeros.length < 11) {
+          erro.textContent = "Digite um número com DDD completo (2 dígitos) e 9 dígitos do número.";
         } else {
+          erro.textContent = "";
+        }
+
+        // Limita o número a 11 dígitos (2 DDD + 9 número)
+        if (numeros.length <= 2) {
           campo.value = numeros;
+        } else if (numeros.length <= 7) {
+          campo.value = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+        } else {
+          campo.value = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
         }
       }
+
+      function irParaSessao(id) {
+        const destino = document.getElementById(id);
+        if (destino) {
+          destino.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputs = ['quantidadeOversized', 'quantidadeTradicional'];
+
+        inputs.forEach(id => {
+          const input = document.getElementById(id);
+
+          input.addEventListener("blur", () => {
+            let valor = input.value.trim();
+
+            if (valor === '') {
+              input.value = '0';
+            } else {
+              input.value = valor.replace(/^0+/, '') || '0';
+            }
+          });
+        });
+      });
     </script>
   </head>
   <body>
-    <div class="form-container">
+  <div class="form-container" id="inicio">
     <img src="https://lh7-us.googleusercontent.com/ZhA_9UjD5EofzgzHgv1vOwHarq7Du-JwR-DjKH8ay5ELi9aAKdIHJwqQQcMjhEIIVWLOk4WtZmt03xEqzFZRtB0WAoL1XMnuntSCoRwloHHm4812ivaWXuPEsLgPGFbX8x0VYFAc1aGdGgoRNPs-64b3Kb5r8lqG8or7SF24egHncGT9EGblwWPC2XV9m2yTJgO5mzLa?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Imagem de Capa">
 
       <p>Depois de <i>muita espera</i>, chegou a hora de vestir a blusa do <strong>nosso</strong> campeão mundial, o <i>(grande) </i>Zé Pequeno 🏆, feita especialmente pra você que vibrou, torceu e se emocionou com cada vitória da nossa MinervaBots ❤️‍🔥</p>
@@ -337,10 +423,11 @@
 
       <label for="telefone">Número de Telefone:</label>
       <input type="text" id="telefone" maxlength="15" oninput="formatarTelefone(this)">
+      <span id="erroTelefone" style="color: red; font-size: 0.8rem;"></span>
     </div>
 
     <div class="button-center">
-      <button onclick="document.getElementById('modeloSection').style.display='block';">Continuar</button>
+      <button onclick="document.getElementById('modeloSection').style.display='block'; irParaSessao('modeloSection')">Continuar</button>
     </div>
 
     <div id="modeloSection" class="section" style="display:none;">
@@ -363,7 +450,7 @@
       <input type="number" id="quantidadeTradicional" min="0" value="0">
 
       <div class="button-center">
-      <button onclick="gerarCamposCamisas()">Confirmar quantidades</button>
+      <button onclick="gerarCamposCamisas(); irParaSessao('camisasContainer')">Confirmar quantidades</button>
       </div>
     </div>
     <div id="camisasContainer" class="section"></div>
