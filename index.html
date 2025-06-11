@@ -255,19 +255,25 @@
       }
 
       function formatarTelefone(campo) {
+        const erro = document.getElementById("erroTelefone");
         // Remove tudo que não for número
         let numeros = campo.value.replace(/\D/g, '');
 
-        // Limita o número a 11 dígitos (2 DDD + 9 número)
-        numeros = numeros.substring(0, 11);
-
-        // Aplica a máscara (xx) xxxxx-xxxx
-        if (numeros.length >= 2 && numeros.length <= 6) {
-          campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2)}`;
-        } else if (numeros.length > 6) {
-          campo.value = `(${numeros.substring(0, 2)}) ${numeros.substring(2, 7)}-${numeros.substring(7)}`;
+        if (numeros.length < 11) {
+          erro.textContent = "Digite um número com DDD completo (2 dígitos) e 9 dígitos do número.";
         } else {
+          erro.textContent = "";
+        }
+
+        // Limita o número a 11 dígitos (2 DDD + 9 número)
+        if (numeros.length <= 2) {
           campo.value = numeros;
+        } else if (numeros.length <= 7) {
+          campo.value = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+        } else {
+          campo.value = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+        }
+      }
 
       function irParaSessao(id) {
         const destino = document.getElementById(id);
@@ -344,6 +350,7 @@
 
       <label for="telefone">Número de Telefone:</label>
       <input type="text" id="telefone" maxlength="15" oninput="formatarTelefone(this)">
+      <span id="erroTelefone" style="color: red; font-size: 0.8rem;"></span>
     </div>
 
     <div class="button-center">
