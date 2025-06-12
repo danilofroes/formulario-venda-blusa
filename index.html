@@ -13,6 +13,8 @@
         color: #000000;
         padding: 20px 10px;
         margin: 0;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
       }
 
       html {
@@ -67,8 +69,11 @@
         margin-top: 20px;
         border-radius: 6px;
         font-size: 1rem;
+        font-weight: 600;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        width: 100%;
+        max-width: 300px;
       }
 
       button:hover {
@@ -82,7 +87,7 @@
       .button-center {
         display: flex;
         justify-content: center;
-        margin-top: 10px;
+        margin-top: 20px;
       }
 
       .imagem-blusa {
@@ -107,7 +112,23 @@
       .camisa-card:hover {
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
       }
+      
+      /* NOVO ESTILO PARA O CONTAINER DAS TABELAS */
+      .tabelas-container {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 15px;
+      }
 
+      .tabelas-container img {
+        width: 50%;
+        max-width: 400px;
+        height: auto;
+        border: 1px solid #eee;
+        border-radius: 8px;
+      }
+      
       button.loading {
         position: relative;
         pointer-events: none;
@@ -136,8 +157,12 @@
 
       @media (max-width: 600px) {
         body {
-          font-size: 12px;
-          padding: 10px;
+          font-size: 14px;
+          padding: 5px;
+        }
+        
+        .form-container {
+          padding: 15px;
         }
 
         p {
@@ -146,6 +171,7 @@
 
         h2 {
           font-size: 1.5em;
+          margin-top: 25px;
         }
 
         h3 {
@@ -154,10 +180,21 @@
 
         input, select, textarea {
           font-size: 1em;
+          padding: 14px;
         }
 
         .camisa-card {
           padding: 15px;
+        }
+        
+        .tabelas-container {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .tabelas-container img {
+          width: 100%;
+          max-width: 350px;
         }
       }
 
@@ -180,7 +217,6 @@
       function gerarCamposCamisas() {
         const inputs = ['quantidadeOversized', 'quantidadeTradicional'];
 
-        // Corrige os valores dos inputs (remove 0 à esquerda e garante 0 se vazio)
         inputs.forEach(id => {
           const input = document.getElementById(id);
           let valor = input.value.trim();
@@ -189,12 +225,10 @@
             input.value = '0';
             valor = '0';
           } else {
-            // Remove zeros à esquerda
             input.value = valor.replace(/^0+/, '') || '0';
           }
         });
 
-        // Agora lê os valores já corrigidos
         oversizedCount = parseInt(document.getElementById('quantidadeOversized').value) || 0;
         tradicionalCount = parseInt(document.getElementById('quantidadeTradicional').value) || 0;
         const container = document.getElementById('camisasContainer');
@@ -310,7 +344,6 @@
 
       function formatarTelefone(campo) {
         const erro = document.getElementById("erroTelefone");
-        // Remove tudo que não for número
         let numeros = campo.value.replace(/\D/g, '');
 
         if (numeros.length < 11) {
@@ -319,7 +352,6 @@
           erro.textContent = "";
         }
 
-        // Limita o número a 11 dígitos (2 DDD + 9 número)
         if (numeros.length <= 2) {
           campo.value = numeros;
         } else if (numeros.length <= 7) {
@@ -357,8 +389,9 @@
   </head>
   <body>
     <div class="form-container" id="inicio">
-      <form id="formulario" onsubmit="event.preventDefault(); enviarFormulario();"></form>
-      <img src="https://lh7-us.googleusercontent.com/ZhA_9UjD5EofzgzHgv1vOwHarq7Du-JwR-DjKH8ay5ELi9aAKdIHJwqQQcMjhEIIVWLOk4WtZmt03xEqzFZRtB0WAoL1XMnuntSCoRwloHHm4812ivaWXuPEsLgPGFbX8x0VYFAc1aGdGgoRNPs-64b3Kb5r8lqG8or7SF24egHncGT9EGblwWPC2XV9m2yTJgO5mzLa?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Imagem de Capa">
+      <form id="formulario" onsubmit="event.preventDefault();">
+      
+        <img src="https://lh7-us.googleusercontent.com/ZhA_9UjD5EofzgzHgv1vOwHarq7Du-JwR-DjKH8ay5ELi9aAKdIHJwqQQcMjhEIIVWLOk4WtZmt03xEqzFZRtB0WAoL1XMnuntSCoRwloHHm4812ivaWXuPEsLgPGFbX8x0VYFAc1aGdGgoRNPs-64b3Kb5r8lqG8or7SF24egHncGT9EGblwWPC2XV9m2yTJgO5mzLa?key=0pnTl8mQAUkCQLxG0Ma0_A" class="imagem-blusa" alt="Imagem de Capa">
 
         <p>Depois de <i>muita espera</i>, chegou a hora de vestir a blusa do <strong>nosso</strong> campeão mundial, o <i>(grande) </i>Zé Pequeno 🏆, feita especialmente pra você que vibrou, torceu e se emocionou com cada vitória da nossa MinervaBots ❤️‍🔥</p>
         <hr>
@@ -371,105 +404,109 @@
         <hr>
         <p> 🚨Formulário disponível até o dia <strong>15 DE JULHO!🚨</strong></p>
 
-      <div class="section">
-        <h2>Informações Pessoais 🫵</h2>
-        <label for="nomeSelect">Nome:</label>
-        <select id="nomeSelect" onchange="showNameInput()">
-          <option value="" disabled selected>Selecione...</option>
-          <option value="Outro">Outro</option>
-          <option value="Ana Clara Pereira da Silva">Ana Clara Pereira da Silva</option>
-          <option value="Ana Luiza Pither Dias">Ana Luiza Pither Dias</option>
-          <option value="Ana Melissa Lemos Medeiros Teixeira">Ana Melissa Lemos Medeiros Teixeira</option>
-          <option value="Antonio Henrique Nazar">Antonio Henrique Nazar</option>
-          <option value="Antônio Luís Gandra Neto">Antônio Luís Gandra Neto</option>
-          <option value="Beatriz Duarte Trigo Garcia">Beatriz Duarte Trigo Garcia</option>
-          <option value="Beatriz Pereira da Silva Gomes de Abreu">Beatriz Pereira da Silva Gomes de Abreu</option>
-          <option value="Bernardo de Souza Batista">Bernardo de Souza Batista</option>
-          <option value="Bruno de Moura Rebello">Bruno de Moura Rebello</option>
-          <option value="Cassiane Da Silva Gomes Rodrigues">Cassiane Da Silva Gomes Rodrigues</option>
-          <option value="Danilo Davi Gomes Fróes">Danilo Davi Gomes Fróes</option>
-          <option value="Diogo dos Santos Machado Vieira">Diogo dos Santos Machado Vieira</option>
-          <option value="Eduardo Conde Jones Borges">Eduardo Conde Jones Borges</option>
-          <option value="Felipe Conde Jones Borges">Felipe Conde Jones Borges</option>
-          <option value="Felipe Moreira Barberá">Felipe Moreira Barberá</option>
-          <option value="Francisco Batista Fernandes de Valério">Francisco Batista Fernandes de Valério</option>
-          <option value="Gabriel Cerqueira Santos">Gabriel Cerqueira Santos</option>
-          <option value="Giovanni Vitor Oliveira">Giovanni Vitor Oliveira</option>
-          <option value="Hugo César de Oliveira">Hugo César de Oliveira</option>
-          <option value="Ileana Thaís Lopes Leandro">Ileana Thaís Lopes Leandro</option>
-          <option value="Isabele Moreira Francisco">Isabele Moreira Francisco</option>
-          <option value="Isabelle Fernandes Martins">Isabelle Fernandes Martins</option>
-          <option value="Izabel de Souza Resende Alcantara">Izabel de Souza Resende Alcantara</option>
-          <option value="João Pedro Benevides Giannini Ehrich">João Pedro Benevides Giannini Ehrich</option>
-          <option value="Júlio Leal de Souza">Júlio Leal de Souza</option>
-          <option value="Kamyla Vitoria Marins Oliveira">Kamyla Vitoria Marins Oliveira</option>
-          <option value="Karen Cerqueira Martins">Karen Cerqueira Martins</option>
-          <option value="Laise Maria Veras Lemos">Laise Maria Veras Lemos</option>
-          <option value="Letycia Ramalho Ignacio Corrêa">Letycia Ramalho Ignacio Corrêa</option>
-          <option value="Lorena da Silva Aragão">Lorena da Silva Aragão</option>
-          <option value="Lucas Araújo dos Anjos">Lucas Araújo dos Anjos</option>
-          <option value="Lucas Freitas Lopes">Lucas Freitas Lopes</option>
-          <option value="Luiz Henrique de Oliveira Vettorazzi">Luiz Henrique de Oliveira Vettorazzi</option>
-          <option value="Maria Clara Borges de Albuquerque de Mendonça">Maria Clara Borges de Albuquerque de Mendonça</option>
-          <option value="Maria Eduarda Gonçalves Santos">Maria Eduarda Gonçalves Santos</option>
-          <option value="Maria Gabriela Silveira Fernandes">Maria Gabriela Silveira Fernandes</option>
-          <option value="Micaela Costa da Luz">Micaela Costa da Luz</option>
-          <option value="Raphael Pinto Martins">Raphael Pinto Martins</option>
-          <option value="Rodrigo Boquimpani Martins">Rodrigo Boquimpani Martins</option>
-          <option value="Ryan Sales de Jesus">Ryan Sales de Jesus</option>
-        </select>
-        <div id="nomeInputDiv" style="display:none;">
-          <label for="nomeOutro">Digite seu nome:</label>
-          <input type="text" id="nomeOutro">
+        <div class="section">
+          <h2>Informações Pessoais 🫵</h2>
+          <label for="nomeSelect">Nome:</label>
+          <select id="nomeSelect" onchange="showNameInput()">
+            <option value="" disabled selected>Selecione...</option>
+            <option value="Outro">Outro</option>
+            <option value="Ana Clara Pereira da Silva">Ana Clara Pereira da Silva</option>
+            <option value="Ana Luiza Pither Dias">Ana Luiza Pither Dias</option>
+            <option value="Ana Melissa Lemos Medeiros Teixeira">Ana Melissa Lemos Medeiros Teixeira</option>
+            <option value="Antonio Henrique Nazar">Antonio Henrique Nazar</option>
+            <option value="Antônio Luís Gandra Neto">Antônio Luís Gandra Neto</option>
+            <option value="Beatriz Duarte Trigo Garcia">Beatriz Duarte Trigo Garcia</option>
+            <option value="Beatriz Pereira da Silva Gomes de Abreu">Beatriz Pereira da Silva Gomes de Abreu</option>
+            <option value="Bernardo de Souza Batista">Bernardo de Souza Batista</option>
+            <option value="Bruno de Moura Rebello">Bruno de Moura Rebello</option>
+            <option value="Cassiane Da Silva Gomes Rodrigues">Cassiane Da Silva Gomes Rodrigues</option>
+            <option value="Danilo Davi Gomes Fróes">Danilo Davi Gomes Fróes</option>
+            <option value="Diogo dos Santos Machado Vieira">Diogo dos Santos Machado Vieira</option>
+            <option value="Eduardo Conde Jones Borges">Eduardo Conde Jones Borges</option>
+            <option value="Felipe Conde Jones Borges">Felipe Conde Jones Borges</option>
+            <option value="Felipe Moreira Barberá">Felipe Moreira Barberá</option>
+            <option value="Francisco Batista Fernandes de Valério">Francisco Batista Fernandes de Valério</option>
+            <option value="Gabriel Cerqueira Santos">Gabriel Cerqueira Santos</option>
+            <option value="Giovanni Vitor Oliveira">Giovanni Vitor Oliveira</option>
+            <option value="Hugo César de Oliveira">Hugo César de Oliveira</option>
+            <option value="Ileana Thaís Lopes Leandro">Ileana Thaís Lopes Leandro</option>
+            <option value="Isabele Moreira Francisco">Isabele Moreira Francisco</option>
+            <option value="Isabelle Fernandes Martins">Isabelle Fernandes Martins</option>
+            <option value="Izabel de Souza Resende Alcantara">Izabel de Souza Resende Alcantara</option>
+            <option value="João Pedro Benevides Giannini Ehrich">João Pedro Benevides Giannini Ehrich</option>
+            <option value="Júlio Leal de Souza">Júlio Leal de Souza</option>
+            <option value="Kamyla Vitoria Marins Oliveira">Kamyla Vitoria Marins Oliveira</option>
+            <option value="Karen Cerqueira Martins">Karen Cerqueira Martins</option>
+            <option value="Laise Maria Veras Lemos">Laise Maria Veras Lemos</option>
+            <option value="Letycia Ramalho Ignacio Corrêa">Letycia Ramalho Ignacio Corrêa</option>
+            <option value="Lorena da Silva Aragão">Lorena da Silva Aragão</option>
+            <option value="Lucas Araújo dos Anjos">Lucas Araújo dos Anjos</option>
+            <option value="Lucas Freitas Lopes">Lucas Freitas Lopes</option>
+            <option value="Luiz Henrique de Oliveira Vettorazzi">Luiz Henrique de Oliveira Vettorazzi</option>
+            <option value="Maria Clara Borges de Albuquerque de Mendonça">Maria Clara Borges de Albuquerque de Mendonça</option>
+            <option value="Maria Eduarda Gonçalves Santos">Maria Eduarda Gonçalves Santos</option>
+            <option value="Maria Gabriela Silveira Fernandes">Maria Gabriela Silveira Fernandes</option>
+            <option value="Micaela Costa da Luz">Micaela Costa da Luz</option>
+            <option value="Raphael Pinto Martins">Raphael Pinto Martins</option>
+            <option value="Rodrigo Boquimpani Martins">Rodrigo Boquimpani Martins</option>
+            <option value="Ryan Sales de Jesus">Ryan Sales de Jesus</option>
+          </select>
+          <div id="nomeInputDiv" style="display:none;">
+            <label for="nomeOutro">Digite seu nome:</label>
+            <input type="text" id="nomeOutro">
+          </div>
+
+          <label for="telefone">Número de Telefone:</label>
+          <input type="text" id="telefone" maxlength="15" oninput="formatarTelefone(this)">
+          <span id="erroTelefone" style="color: red; font-size: 0.8rem;"></span>
         </div>
-
-        <label for="telefone">Número de Telefone:</label>
-        <input type="text" id="telefone" maxlength="15" oninput="formatarTelefone(this)">
-        <span id="erroTelefone" style="color: red; font-size: 0.8rem;"></span>
-      </div>
-
-      <div class="button-center">
-        <button onclick="document.getElementById('modeloSection').style.display='block'; irParaSessao('modeloSection')">Continuar</button>
-      </div>
-
-      <div id="modeloSection" class="section" style="display:none;">
-        <h2>Seleção de Modelos 👕​</h2>
-        <h3>Evite imprevistos e garanta que sua blusa fique perfeita em você!🫰</h3>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-          <img src="https://lh7-us.googleusercontent.com/nt4YHbtg7qxCEojH680FzVFSEjylRtbQKl9FHmZZ4-foAqXzuGYU11RCKDImfq4kZznmUOkCkeyl2Tds8eSYG-EuJ-P4dONaqdE1jt47-b_clwadhgvnUxGYBYTls-FzQ5ny_N5cnz5a3KoVcB3X4MRsHueSedjrlgwNTHolzRcl9YjvtHt9yi0x3BsCbkR3FF6gLJk8?key=0pnTl8mQAUkCQLxG0Ma0_A" 
-              alt="Tabela 1" style="width: 50%; max-width: 400px; height: auto;">
-          <img src="https://lh7-us.googleusercontent.com/HLYcRL9t8kj9bV_ZoGGMpO5JAudzS8zPPwGtRXTi77ullkT9Pcj4wwgf92i79LXLACUuXjsqQq1oX38WevgeZzFbjY3d_wMhgJwGd6YnHl6WKg6CHNp89gdcnpRRhId-oUvvLJIb0euMK0MeDoeiF2r7rNjhNguAoY0a6hlsFAfq3cWXmJJ9zNPshVzmZPojXnH0yTBV?key=0pnTl8mQAUkCQLxG0Ma0_A" 
-              alt="Tabela 2" style="width: 50%; max-width: 400px; height: auto;">
-        </div>
-
-        <p>⚠️​📢​ Confira <strong>atentamente</strong> o guia de medidas disponível acima. <strong>Não será possível realizar trocas posteriormente.</strong></p>
-
-        <label for="quantidadeOversized">Quantidade de Blusas Modelo Oversized:</label>
-        <input type="number" id="quantidadeOversized" min="0" value="0">
-
-        <label for="quantidadeTradicional">Quantidade de Blusas Modelo Tradicional:</label>
-        <input type="number" id="quantidadeTradicional" min="0" value="0">
 
         <div class="button-center">
-        <button onclick="gerarCamposCamisas(); irParaSessao('camisasContainer')">Confirmar quantidades</button>
+          <button type="button" onclick="document.getElementById('modeloSection').style.display='block'; irParaSessao('modeloSection')">Continuar</button>
         </div>
-      </div>
-      <div id="camisasContainer" class="section"></div>
 
-      <div id="pagamentoSection" class="section" style="display:none;">
-        <h2>Pagamento 💸</h2>
-        <p><strong>Valor total:</strong> <span id="valorTotal">R$ 0,00</span></p>
-        <hr>
-        <p>Faça o PIX para a chave: <strong>sumomini@poli.ufrj.br</strong></p>
-        <p>Nome: Danilo Davi Gomes Fróes | Banco: NuBank</p>
-        <p><strong>Qualquer dúvida, mande mensagem para o Fróes: (21)99383-9603</strong></p>
-        <hr>
-        <label for="comprovante">Envie o comprovante de pagamento (imagem ou PDF):</label>
-        <input type="file" id="comprovante" accept="image/*,application/pdf">
-        <div class="button-center">
-          <button id="enviarBtn" onclick="enviarFormulario()">Enviar Pedido</button>
+        <div id="modeloSection" class="section" style="display:none;">
+          <h2>Seleção de Modelos 👕​</h2>
+          <h3>Evite imprevistos e garanta que sua blusa fique perfeita em você!🫰</h3>
+          
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <img src="https://lh7-us.googleusercontent.com/nt4YHbtg7qxCEojH680FzVFSEjylRtbQKl9FHmZZ4-foAqXzuGYU11RCKDImfq4kZznmUOkCkeyl2Tds8eSYG-EuJ-P4dONaqdE1jt47-b_clwadhgvnUxGYBYTls-FzQ5ny_N5cnz5a3KoVcB3X4MRsHueSedjrlgwNTHolzRcl9YjvtHt9yi0x3BsCbkR3FF6gLJk8?key=0pnTl8mQAUkCQLxG0Ma0_A"
+                alt="Tabela 1" style="width: 50%; max-width: 400px; height: auto;">
+            <img src="https://lh7-us.googleusercontent.com/HLYcRL9t8kj9bV_ZoGGMpO5JAudzS8zPPwGtRXTi77ullkT9Pcj4wwgf92i79LXLACUuXjsqQq1oX38WevgeZzFbjY3d_wMhgJwGd6YnHl6WKg6CHNp89gdcnpRRhId-oUvvLJIb0euMK0MeDoeiF2r7rNjhNguAoY0a6hlsFAfq3cWXmJJ9zNPshVzmZPojXnH0yTBV?key=0pnTl8mQAUkCQLxG0Ma0_A"
+                alt="Tabela 2" style="width: 50%; max-width: 400px; height: auto;">
+          <hr>
+          </div>
+
+          <p>⚠️​📢​ Confira <strong>atentamente</strong> o guia de medidas disponível acima. <strong>Não será possível realizar trocas posteriormente.</strong></p>
+
+          <label for="quantidadeOversized">Quantidade de Blusas Modelo Oversized:</label>
+          <input type="number" id="quantidadeOversized" min="0" value="0">
+
+          <label for="quantidadeTradicional">Quantidade de Blusas Modelo Tradicional:</label>
+          <input type="number" id="quantidadeTradicional" min="0" value="0">
+
+          <div class="button-center">
+            <button type="button" onclick="gerarCamposCamisas(); irParaSessao('camisasContainer')">Confirmar quantidades</button>
+          </div>
         </div>
-      </div>
-    </form> </div>
+        
+        <div id="camisasContainer" class="section"></div>
+
+        <div id="pagamentoSection" class="section" style="display:none;">
+          <h2>Pagamento 💸</h2>
+          <p><strong>Valor total:</strong> <span id="valorTotal">R$ 0,00</span></p>
+          <hr>
+          <p>Faça o PIX para a chave: <strong>sumomini@poli.ufrj.br</strong></p>
+          <p>Nome: Danilo Davi Gomes Fróes | Banco do Brasil</p>
+          <p><strong>Qualquer dúvida, mande mensagem para o Fróes: (21) 99383-9603</strong></p>
+          <hr>
+          <label for="comprovante">Envie o comprovante de pagamento (imagem ou PDF):</label>
+          <input type="file" id="comprovante" accept="image/*,application/pdf">
+          <div class="button-center">
+            <button id="enviarBtn" type="button" onclick="enviarFormulario()">Enviar Pedido</button>
+          </div>
+        </div>
+        
+      </form> </div>
   </body>
 </html>
